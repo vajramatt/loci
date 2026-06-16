@@ -48,9 +48,20 @@ PAD = 22
 CHAR_W = FONT_SIZE * 0.6
 
 
+SUB_SIZE = 12  # tagline font size
+
+
 def build_svg():
     lines = ART.split("\n")
     max_cols = max(len(l) for l in lines)
+    wordmark_w = max_cols * CHAR_W
+    # The tagline (a short wordmark like LOCI is narrower than it) must not be
+    # clipped, so the canvas is sized to whichever is wider.
+    subtitle_w = len(SUBTITLE) * SUB_SIZE * 0.62
+    content_w = max(wordmark_w, subtitle_w)
+    w = int(content_w + PAD * 2 + 0.999)
+    x_off = (w - wordmark_w) / 2   # centre the wordmark in the canvas
+
     texts = []
     for row, line in enumerate(lines):
         y = PAD + row * LINE_H + FONT_SIZE
@@ -60,14 +71,13 @@ def build_svg():
             if ch == " ":
                 continue
             fill = grad_color((i / n) * 0.9 + row * 0.07)
-            x = PAD + i * CHAR_W
+            x = x_off + i * CHAR_W
             spans.append(
                 f'<tspan x="{x:.2f}" textLength="{CHAR_W:.2f}" '
                 f'lengthAdjust="spacingAndGlyphs" fill="{fill}">{ch}</tspan>'
             )
         texts.append(f'<text y="{y:.1f}" xml:space="preserve">{"".join(spans)}</text>')
 
-    w = int(max_cols * CHAR_W + PAD * 2 + 0.999)
     sub_y = PAD + len(lines) * LINE_H + FONT_SIZE + 4
     h = int(sub_y + PAD - 6 + 0.999)
     font = ("ui-monospace, 'JetBrains Mono', 'SFMono-Regular', "
