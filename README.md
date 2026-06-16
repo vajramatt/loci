@@ -52,7 +52,7 @@ against a Python ≥3.11.
 Then, in a new shell:
 
 ```sh
-export ANTHROPIC_API_KEY="sk-ant-..."   # loci reads this from the env, only
+export LOCI_ANTHROPIC_KEY="sk-ant-..."  # loci's own var; read from the env only
 loci onboard                            # consent, defaults, and a live key check
 // say hello                            # your first turn
 ```
@@ -61,7 +61,7 @@ loci onboard                            # consent, defaults, and a live key chec
 
 - zsh (the `//` hook is a zsh ZLE widget)
 - pipx (recommended), or a Python 3.11+ on your PATH
-- An Anthropic API key in `ANTHROPIC_API_KEY`
+- An Anthropic API key in `LOCI_ANTHROPIC_KEY` (or `ANTHROPIC_API_KEY` as a fallback)
 
 ## Configuration
 
@@ -74,7 +74,9 @@ loci onboard                            # consent, defaults, and a live key chec
 | `verbosity`          | `normal`             | `quiet` / `normal` / `verbose`           |
 
 Per-run flags: `--dry-run`, `--allow-outside`, `--model NAME`, `--no-color`,
-`-q`/`-v`. The key is **only** ever read from the environment.
+`-q`/`-v`. The key is **only** ever read from the environment —
+`LOCI_ANTHROPIC_KEY` first (loci's own, isolated variable), then
+`ANTHROPIC_API_KEY` as a fallback.
 
 ## Safety
 

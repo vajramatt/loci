@@ -41,8 +41,10 @@ breaking change to the project's promise:
 7. **Confirms fail safe.** `safety.confirm` returns `True` only for an explicit
    `y`/`yes`; EOF and everything else is `False`.
 
-The API key is read from `ANTHROPIC_API_KEY` only, at runtime. Never log it, never
-write it to disk, never add it to the repo.
+The API key is read from the environment only, at runtime — `LOCI_ANTHROPIC_KEY`
+first (loci's own variable, isolated from other tools), then `ANTHROPIC_API_KEY`
+as a fallback (see `client.API_KEY_ENV_VARS`). Never log it, never write it to
+disk, never add it to the repo.
 
 ## How tools are registered
 

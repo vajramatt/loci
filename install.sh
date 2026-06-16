@@ -169,16 +169,18 @@ else
 fi
 
 rule "key"
-if [ -n "${ANTHROPIC_API_KEY:-}" ]; then
-  ok "ANTHROPIC_API_KEY is set"
+if [ -n "${LOCI_ANTHROPIC_KEY:-}" ]; then
+  ok "LOCI_ANTHROPIC_KEY is set"
+elif [ -n "${ANTHROPIC_API_KEY:-}" ]; then
+  ok "ANTHROPIC_API_KEY is set (loci can use it; LOCI_ANTHROPIC_KEY takes priority)"
 else
-  info "ANTHROPIC_API_KEY is not set (loci reads it from the environment; never stored)"
+  info "no key set yet (loci reads LOCI_ANTHROPIC_KEY or ANTHROPIC_API_KEY; never stored)"
 fi
 
 # --- close ------------------------------------------------------------------
 printf '\n%b┌─ ready %b\n' "$BLUE" "$RST"
 printf '%b│%b  1. open a new terminal (or: %bsource %s%b)\n' "$BLUE" "$RST" "$CYAN" "$ZSHRC" "$RST"
-printf '%b│%b  2. set your key:  %bexport ANTHROPIC_API_KEY="sk-ant-..."%b\n' "$BLUE" "$RST" "$CYAN" "$RST"
+printf '%b│%b  2. set your key:  %bexport LOCI_ANTHROPIC_KEY="sk-ant-..."%b\n' "$BLUE" "$RST" "$CYAN" "$RST"
 printf '%b│%b  3. run setup:     %bloci onboard%b\n' "$BLUE" "$RST" "$CYAN" "$RST"
 printf '%b│%b  4. summon it:     %b// list this directory and suggest a .gitignore%b\n' "$BLUE" "$RST" "$CYAN" "$RST"
 printf '%b└%b  %bthe genius of the place is yours.%b\n\n' "$BLUE" "$RST" "$DIM" "$RST"

@@ -1,8 +1,10 @@
 """Thin wrapper around the official Anthropic SDK.
 
-The API key comes from ANTHROPIC_API_KEY in the environment ONLY. It is read at
-runtime, never written to disk, never logged. The `anthropic` import is local to
-the functions so the rest of loci (and the test suite) does not require the SDK.
+The API key is read from the environment ONLY, at runtime — never written to disk,
+never logged. loci prefers its OWN variable, LOCI_ANTHROPIC_KEY, so it is isolated
+from the shared ANTHROPIC_API_KEY that other tools read and sometimes clobber; it
+falls back to ANTHROPIC_API_KEY for convenience. The `anthropic` import is local
+to the functions so the rest of loci (and the test suite) does not require the SDK.
 """
 
 from __future__ import annotations
@@ -12,21 +14,26 @@ from typing import List, Optional
 
 MAX_TOKENS = 4096
 
+# Checked in order; the first non-empty one wins.
+API_KEY_ENV_VARS = ("LOCI_ANTHROPIC_KEY", "ANTHROPIC_API_KEY")
+
 
 class MissingKeyError(Exception):
     pass
 
 
 def get_api_key() -> str:
-    key = os.environ.get("ANTHROPIC_API_KEY")
-    if not key:
-        raise MissingKeyError(
-            "ANTHROPIC_API_KEY is not set.\n"
-            "  Set it in your shell, e.g.:\n"
-            '    export ANTHROPIC_API_KEY="sk-ant-..."\n'
-            "  loci reads it from the environment and never stores it."
-        )
-    return key
+    for var in API_KEY_ENV_VARS:
+        key = os.environ.get(var)
+        if key:
+            return key
+    raise MissingKeyError(
+        "No API key found. loci reads it from the environment (never stored).\n"
+        "  Preferred — loci's own variable, isolated from other tools:\n"
+        '    export LOCI_ANTHROPIC_KEY="sk-ant-..."\n'
+        "  Fallback — the shared Anthropic variable:\n"
+        '    export ANTHROPIC_API_KEY="sk-ant-..."'
+    )
 
 
 def make_client():
