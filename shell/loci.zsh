@@ -32,9 +32,10 @@ loci-accept-line() {
       # bare //  -> sustained chat
       BUFFER='loci chat'
     else
-      # one ambient turn. ${(q)raw} quotes the request so the re-parse keeps it
-      # as a single, literal argument — captured RAW as promised.
-      BUFFER="loci turn -- ${(q)raw}"
+      # one ambient turn. ${(qq)raw} single-quotes the request so the re-parse
+      # keeps it as one literal argument — captured RAW as promised — and the
+      # echoed command line reads cleanly (no backslash-escaped words).
+      BUFFER="loci turn -- ${(qq)raw}"
     fi
   fi
   zle .accept-line
