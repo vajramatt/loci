@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.svg" alt="loci — the genius of the place · summon with //" width="420">
+  <img src="docs/banner.svg?v=2" alt="loci — the genius of the place · summon with //" width="420">
 </p>
 
 # loci
