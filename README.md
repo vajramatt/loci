@@ -38,6 +38,33 @@ Both forms share one session thread per terminal window.
 // :forget   # wipe this session's transcript
 ```
 
+## Cheatsheet
+
+Summon it any time with **`// help`** (instant, no API call). It prints:
+
+```text
+── summon ──
+  // <request>      one ambient turn in the current directory
+  //  (then Enter)  a sustained chat — leave with // or Ctrl-D
+── session ──
+  // :new           start a fresh conversation
+  // :forget        wipe this terminal's transcript
+  // help           show this
+── what it can do  (asks before anything destructive) ──
+  read    list_files · read_file · find_files · search_text
+  write   write_file · edit_file · make_dir · rename/move/delete_file
+  shell   run_shell — off until you enable it in `loci onboard`
+  memory  reads & writes OKF knowledge in ./.loci and the global bundle
+── safety ──
+  • acts only inside the current directory (cwd boundary)
+  • one y/N per destructive action; a shown plan + one y/N for batches
+  • run_shell shows the command first · --dry-run changes nothing
+── config ──
+  key     LOCI_ANTHROPIC_KEY  (or ANTHROPIC_API_KEY)
+  setup   loci onboard   ·   ~/.config/loci/config.json
+  flags   --dry-run · --allow-outside · --model NAME · --no-color · -q/-v
+```
+
 ## Install
 
 [pipx](https://pipx.pypa.io) is the recommended installer — it brings its own
