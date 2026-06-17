@@ -18,26 +18,33 @@ from .memory.session import Session
 from .sandbox import Sandbox
 from .ui import UI
 
-USAGE = """\
-loci — the genius of the place
+HELP_TOKENS = {"help", ":help", "?", "--help", "-h"}
 
-  // <request>     one ambient turn in the current directory
-  //  (then Enter) a sustained chat; exit with Ctrl-D or //
 
-Commands:
-  loci turn -- <request>   run a single turn (what the // hook calls)
-  loci chat                start a sustained session
-  loci onboard             first-run setup (consent, defaults, key check)
-  loci version             print version
-  loci help                this message
-
-Global flags:
-  --dry-run         mutate nothing; only print intended actions
-  --allow-outside   permit paths outside the current directory
-  --model NAME      override the model for this run
-  --no-color        disable ANSI styling
-  -q | -v           quieter / more verbose
-"""
+def render_help(ui: UI) -> None:
+    """A local, instant cheatsheet — printed by `// help` and `loci help`."""
+    ui.rule("summon")
+    ui.line("  // <request>      one ambient turn in the current directory")
+    ui.line("  //  (then Enter)  a sustained chat — leave with // or Ctrl-D")
+    ui.rule("session")
+    ui.line("  // :new           start a fresh conversation")
+    ui.line("  // :forget        wipe this terminal's transcript")
+    ui.line("  // help           show this")
+    ui.rule("what it can do  (asks before anything destructive)")
+    ui.line("  read    list_files · read_file · find_files · search_text")
+    ui.line("  write   write_file · edit_file · make_dir · rename/move/delete_file")
+    ui.line("  shell   run_shell — off until you enable it in `loci onboard`")
+    ui.line("  memory  reads & writes OKF knowledge in ./.loci and the global bundle")
+    ui.rule("safety")
+    ui.line("  • acts only inside the current directory (cwd boundary)")
+    ui.line("  • one y/N per destructive action; a shown plan + one y/N for batches")
+    ui.line("  • run_shell shows the command first · --dry-run changes nothing")
+    ui.rule("config")
+    ui.line("  key     LOCI_ANTHROPIC_KEY  (or ANTHROPIC_API_KEY)")
+    ui.line("  setup   loci onboard   ·   ~/.config/loci/config.json")
+    ui.line("  flags   --dry-run · --allow-outside · --model NAME · --no-color · -q/-v")
+    ui.line("")
+    ui.info("use at your own risk — see the README Disclaimer.")
 
 
 def _build(cfg, opts):
@@ -48,7 +55,11 @@ def _build(cfg, opts):
 
 
 def _handle_control(token: str, session: Session, ui: UI) -> bool:
-    """Handle :new / :forget. Returns True if the token was a control command."""
+    """Handle help / :new / :forget locally. Returns True if it was a control
+    command (so no API turn is made)."""
+    if token in HELP_TOKENS:
+        render_help(ui)
+        return True
     if token == ":new":
         session.reset()
         ui.info("started a fresh session.")
@@ -152,7 +163,7 @@ def main(argv=None) -> int:
     cfg = config.load_config()
 
     if cmd in ("help", "-h", "--help") or (cmd is None and not literal):
-        sys.stdout.write(USAGE)
+        render_help(UI(color=(False if opts["no_color"] else None)))
         return 0
     if cmd == "version":
         from . import __version__
