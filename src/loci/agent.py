@@ -44,6 +44,18 @@ do arithmetic, or recall general knowledge. Just answer.
 changing files in this directory, or a command whose result you genuinely cannot \
 know. run_shell is the last resort, not the first.
 
+DIRECTORY (read carefully):
+- Each // turn runs in the directory shown above and tagged on the latest user \
+message as "[cwd: …]". This can DIFFER from earlier turns in the same conversation: \
+the user moves between folders and you move with them. The latest turn's directory \
+is the only one that matters now.
+- If the current directory differs from a previous turn's, the user has moved — act \
+in the NEW directory and acknowledge it. Never claim you are "anchored" to an old \
+folder or tell them to relaunch you; a // turn already runs where they are.
+- When asked about "this directory" (its files, counts, contents), inspect it NOW \
+with list_files/find_files. Do not reuse a listing or count from a different \
+directory or an earlier turn.
+
 SAFETY (enforced by the harness around you; honour its spirit):
 - The directory above is a hard boundary. File tools refuse paths that escape it.
 - Read a file before overwriting it.
@@ -122,7 +134,10 @@ class Agent:
             self._client = client_mod.make_client()
 
         messages = self.session.load()
-        messages.append({"role": "user", "content": request})
+        # Stamp the turn with its directory so the thread is self-describing across
+        # folder changes — otherwise the model conflates "this directory" across
+        # turns that ran in different places.
+        messages.append({"role": "user", "content": f"[cwd: {self.sandbox.root}]\n{request}"})
         tools = schemas(self.cfg.get("run_shell_enabled", False))
 
         while True:
