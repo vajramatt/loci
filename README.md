@@ -40,10 +40,12 @@ Both forms share one session thread per terminal window.
 
 ## Cheatsheet
 
-Summon it any time with **`// help`** (instant, no API call). It prints:
+Summon it any time with **`// help`** (instant, no API call). The header shows
+your version, with the build commit appended (e.g. `v0.1.0 (e734110)`) — quote
+it in bug reports. It prints:
 
 ```text
-── summon ──
+── loci · v0.1.0 ──
   // <request>      one ambient turn in the current directory
   //  (then Enter)  a sustained chat — leave with // or Ctrl-D
 ── session ──
@@ -175,10 +177,13 @@ and loops until the turn ends. Text is streamed as it arrives.
 
 ## Development
 
-Install editable so your edits apply without reinstalling:
+`./install.sh` installs **editable by default**, so a `git pull` takes effect
+with no reinstall — your running `loci` never drifts from your checkout. Pass
+`--release` for a frozen copy of the tree instead:
 
 ```sh
-./install.sh --dev                       # pipx editable install + the zsh hook
+./install.sh                             # editable (default) + the zsh hook
+./install.sh --release                   # frozen copy, stamped with its commit
 # or directly:  pipx install --editable .
 ```
 

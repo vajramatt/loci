@@ -23,7 +23,8 @@ HELP_TOKENS = {"help", ":help", "?", "--help", "-h"}
 
 def render_help(ui: UI) -> None:
     """A local, instant cheatsheet — printed by `// help` and `loci help`."""
-    ui.rule("summon")
+    from . import version_string
+    ui.rule(f"loci · v{version_string()}")
     ui.line("  // <request>      one ambient turn in the current directory")
     ui.line("  //  (then Enter)  a sustained chat — leave with // or Ctrl-D")
     ui.rule("session")
@@ -168,8 +169,8 @@ def main(argv=None) -> int:
         render_help(UI(color=(False if opts["no_color"] else None)))
         return 0
     if cmd == "version":
-        from . import __version__
-        sys.stdout.write(f"loci {__version__}\n")
+        from . import version_string
+        sys.stdout.write(f"loci {version_string()}\n")
         return 0
     if cmd == "onboard":
         from .onboard import run_onboard

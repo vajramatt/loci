@@ -90,8 +90,14 @@ run_spun() { # $1 label, rest: command
 py_ge_311() { "$1" -c 'import sys; raise SystemExit(0 if sys.version_info[:2] >= (3,11) else 1)' 2>/dev/null; }
 
 # --- run --------------------------------------------------------------------
-DEV=0
-[ "${1:-}" = "--dev" ] && DEV=1   # editable install for development
+# Editable by default: a `git pull` then takes effect with no reinstall, so a
+# tracked clone never drifts from the running binary. `--release` installs a
+# frozen copy of the tree instead. `--dev` stays as a harmless alias.
+EDITABLE=1
+case "${1:-}" in
+  --release) EDITABLE=0 ;;
+  --dev)     EDITABLE=1 ;;
+esac
 
 banner
 rule "checks"
@@ -125,20 +131,39 @@ else
 fi
 
 rule "install"
+
+# Record the build commit so `// help` and `loci version` report the exact build.
+# A --release install copies the tree and loses the .git dir, so a stamp is the
+# only commit info that rides along — write it. An editable install keeps the
+# .git dir, so loci's live `git` lookup always reflects the *current* checkout;
+# a stamp there would freeze a stale SHA across pulls, so remove any leftover.
+STAMP="$SCRIPT_DIR/src/loci/_commit.py"
+if [ "$EDITABLE" = 0 ] && command -v git >/dev/null 2>&1 \
+   && git -C "$SCRIPT_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+  SHA=$(git -C "$SCRIPT_DIR" rev-parse --short HEAD 2>/dev/null || true)
+  if [ -n "${SHA:-}" ]; then
+    git -C "$SCRIPT_DIR" diff --quiet 2>/dev/null || SHA="$SHA-dirty"
+    printf 'COMMIT = "%s"\n' "$SHA" > "$STAMP"
+    info "stamped build $SHA"
+  fi
+else
+  rm -f "$STAMP"   # editable: let the live git lookup report the true commit
+fi
+
 INSTALL_OK=0
 if [ "$HAVE_PIPX" = 1 ]; then
   # pipx: isolated venv, modern pip, loci on PATH. --force makes it idempotent.
-  if [ "$DEV" = 1 ]; then
+  if [ "$EDITABLE" = 1 ]; then
     run_spun "installing loci (editable, pipx)" pipx install --force --editable "$SCRIPT_DIR" && INSTALL_OK=1
   else
-    run_spun "installing loci (pipx)" pipx install --force "$SCRIPT_DIR" && INSTALL_OK=1
+    run_spun "installing loci (release, pipx)" pipx install --force "$SCRIPT_DIR" && INSTALL_OK=1
   fi
   BIN_DIR="${PIPX_BIN_DIR:-$HOME/.local/bin}"
 else
-  if [ "$DEV" = 1 ]; then
+  if [ "$EDITABLE" = 1 ]; then
     run_spun "installing loci (editable)" "$PYTHON" -m pip install --user --editable "$SCRIPT_DIR" && INSTALL_OK=1
   else
-    run_spun "installing loci" "$PYTHON" -m pip install --user "$SCRIPT_DIR" && INSTALL_OK=1
+    run_spun "installing loci (release)" "$PYTHON" -m pip install --user "$SCRIPT_DIR" && INSTALL_OK=1
   fi
   BIN_DIR="$("$PYTHON" -m site --user-base 2>/dev/null)/bin"
 fi

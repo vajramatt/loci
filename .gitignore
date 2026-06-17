@@ -4,6 +4,9 @@
 # Python
 __pycache__/
 *.py[cod]
+
+# Build stamp written by install.sh (records the short commit for `// help`)
+src/loci/_commit.py
 *.egg-info/
 build/
 dist/

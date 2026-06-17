@@ -18,7 +18,9 @@ class ControlTokenTest(unittest.TestCase):
         handled = cli._handle_control("help", Session(key="t"), ui)
         self.assertTrue(handled)
         out = ui.stream.getvalue()
-        self.assertIn("summon", out)
+        from loci import __version__
+        self.assertIn(f"v{__version__}", out)   # version header — quoted in bug reports
+        self.assertIn("// <request>", out)
         self.assertIn("run_shell", out)
 
     def test_help_aliases(self):
