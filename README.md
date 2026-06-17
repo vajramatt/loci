@@ -10,6 +10,14 @@ and leave — it is a presence you address from your own prompt, in whatever
 directory you're standing in. The current working directory is its world: loci is
 the genius of the place you summon it.
 
+> [!WARNING]
+> **Use at your own risk.** loci can read, modify, move, and delete files — and,
+> if you enable it, run arbitrary shell commands — in the directories you point
+> it at. An LLM can make mistakes. **You** are responsible for what you let it do.
+> It is provided "AS IS", with no warranty and no liability on the authors; see
+> the [Disclaimer](#disclaimer) and [LICENSE](LICENSE). Keep version control or
+> backups, and review what it proposes before approving.
+
 ## The `//` UX
 
 ```sh
@@ -146,6 +154,24 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 
 The suite covers the cwd sandbox (path-escape rejection), the plan/confirm
 gating, and an OKF bundle read/write round-trip.
+
+## Disclaimer
+
+loci is an autonomous agent. It can read, modify, move, and delete files, and —
+when you enable `run_shell` — execute arbitrary shell commands in the directories
+you point it at. It is driven by a large language model, which can misunderstand,
+hallucinate, or take actions you did not intend. Its safety model (confirmations,
+shown plans, the cwd boundary, `--dry-run`) reduces risk but does **not**
+eliminate it.
+
+**You use loci entirely at your own risk.** To the maximum extent permitted by
+applicable law, the software is provided "AS IS", without warranty of any kind,
+express or implied, and in no event shall the authors or contributors be liable
+for any claim, damages, data loss, or other liability arising from the software
+or its use — as set out in the [MIT LICENSE](LICENSE). By installing, running, or
+otherwise using loci you accept these terms. Use version control or backups,
+review proposed actions before approving them, and run it only where you accept
+the consequences. Nothing here is legal advice.
 
 ## License
 

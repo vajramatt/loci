@@ -35,11 +35,14 @@ def run_onboard(cfg: dict, opts: dict) -> int:
 
     # 1. Safety consent --------------------------------------------------- #
     ui.panel("safety", [
-        "loci can READ files, MODIFY files, and (if you allow it) RUN shell",
+        "loci can READ, MODIFY, and DELETE files, and (if you allow it) RUN shell",
         "commands in the directory you point it at. It always asks before any",
         "destructive action, and shows every command before running it.",
         "",
         "run_shell has the largest blast radius and stays OFF until you opt in.",
+        "",
+        "loci is provided AS IS, with NO warranty. You use it AT YOUR OWN RISK;",
+        "you are responsible for what you let it do. See the README Disclaimer.",
     ])
     ans = _ask(ui, 'Type "yes" to acknowledge and enable run_shell (anything else keeps it off): ')
     cfg["consented"] = True
