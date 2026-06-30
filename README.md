@@ -110,7 +110,7 @@ loci onboard                            # consent, defaults, and a live key chec
 
 | key                  | default              | meaning                                  |
 |----------------------|----------------------|------------------------------------------|
-| `model`              | `claude-sonnet-4-6`  | overridable to a stronger model          |
+| `model`              | `claude-sonnet-5`    | overridable to a stronger model          |
 | `run_shell_enabled`  | `false`              | the shell tool stays off until you opt in |
 | `web_fetch_enabled`  | `false`              | the web_fetch tool (reads URLs via w3m) stays off until you opt in |
 | `verbosity`          | `normal`             | `quiet` / `normal` / `verbose`           |

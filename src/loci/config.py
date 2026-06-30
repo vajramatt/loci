@@ -12,7 +12,7 @@ from pathlib import Path
 
 # Default model. Overridable in config.json or with --model. The spec calls for a
 # capable default that can be pointed at a stronger model.
-DEFAULT_MODEL = "claude-sonnet-4-6"
+DEFAULT_MODEL = "claude-sonnet-5"
 
 # Rolling session transcript budget, in (estimated) tokens.
 DEFAULT_SESSION_TOKEN_BUDGET = 24_000
